@@ -1,0 +1,34 @@
+def make_feature_vector(dictionary):
+    directory = "emails/"
+    root = os.listdir(directory)
+    emails = [directory + email for email in root]
+    feature_set = []
+    labels = []
+    count = len(emails)
+
+    for email in emails:
+        datalist = []
+        y = open(email)
+        words = y.read().split(' ')
+        for key in dictionary:
+            datalist.append(words.count(key[0]))
+        feature_set.append(datalist)
+
+        if "ham" in email:
+            labels.append(0)
+        if "spam" in email:
+            labels.append(1)
+        print count
+        count = count - 1
+    return feature_set, labels
+
+
+dict = make_dict()
+features, labels = make_feature_vector(dict)
+#print len(features),len(labels)
+p_train,p_test,q_train,q_test=tts(features,labels,test_size=0.2)
+classifier=MultinomialNB()
+classifier.fit(p_train,q_train)
+preds=classifier.predict(p_test)
+print accuracy_score(q_test,preds)
+save(classifier, "model.mdl")
